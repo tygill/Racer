@@ -10,3 +10,10 @@
 *.lai
 *.la
 *.a
+
+# Visual Studio stuff
+*.sdf
+*.suo
+*.vcsproj.filters
+*.vcsproj.user
+ipch/*

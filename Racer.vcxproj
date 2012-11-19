@@ -11,7 +11,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\kixor_obj\list.cpp" />
+    <ClCompile Include="lib\kixor_obj\objLoader.cpp" />
+    <ClCompile Include="lib\kixor_obj\obj_parser.cpp" />
+    <ClCompile Include="lib\kixor_obj\string_extra.cpp" />
+    <ClCompile Include="src\Geometry.cpp" />
+    <ClCompile Include="src\KineticState.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Matrix4.cpp" />
+    <ClCompile Include="src\ObjectMan.cpp" />
+    <ClCompile Include="src\TextureMan.cpp" />
+    <ClCompile Include="src\Vec4.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\Face.h" />
+    <ClInclude Include="inc\Geometry.h" />
+    <ClInclude Include="inc\KineticState.h" />
+    <ClInclude Include="inc\kixor_obj\list.h" />
+    <ClInclude Include="inc\kixor_obj\objLoader.h" />
+    <ClInclude Include="inc\kixor_obj\obj_parser.h" />
+    <ClInclude Include="inc\kixor_obj\string_extra.h" />
+    <ClInclude Include="inc\main.h" />
+    <ClInclude Include="inc\Matrix4.h" />
+    <ClInclude Include="inc\ObjectMan.h" />
+    <ClInclude Include="inc\TextureMan.h" />
+    <ClInclude Include="inc\Vec4.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\freeglut.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\freeglut.dll" />
+    <None Include="models\models.enlistments" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9D8B9E45-FDE8-4EA6-802A-B052CF05D32C}</ProjectGuid>
@@ -22,7 +53,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -58,6 +89,12 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y "$(ProjectDir)lib\freeglut.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy FreeGlut dll into build folder</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

@@ -14,6 +14,13 @@
 # Visual Studio stuff
 *.sdf
 *.suo
+*.opensdf
 *.vcsproj.filters
 *.vcsproj.user
+*.vcxproj.filters
+*.vcxproj.user
 ipch/*
+
+# Build Folders
+Debug/*
+Release/*

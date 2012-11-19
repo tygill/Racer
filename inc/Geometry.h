@@ -16,6 +16,7 @@
 #include <vector>
 #include "Vec4.h"
 #include "KineticState.h"
+#include "Face.h"
 using namespace std;
 
 class Geometry{
@@ -25,7 +26,8 @@ private:
 	vector<Vec4> vertices;
 	vector<Vec4> normals;
 	vector<Vec4> uvs;
-	map<int,vector<Vec4*> point_groups;
+	vector<Face> faces;
+	map<int,vector<Vec4*> > point_groups;
 	Vec4 scale;
 	Vec4 rotate;
 	Vec4 translate;
@@ -41,8 +43,16 @@ public:
 		int num_v = 0, float** vertices = NULL,
 		int num_n = 0, float** normals = NULL,
 		int num_u = 0, float** uvs = NULL);
+
+	Geometry(string new_id,
+		vector<Vec4> _verts,
+		vector<Vec4> _norms,
+		vector<Vec4> _uvs,
+		vector<Face> _faces);
+
 	
 	// Instance Methods
+	void Draw();
 
 };
 

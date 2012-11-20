@@ -24,11 +24,13 @@
 Geometry::Geometry()
 	: scale(Matrix4::identityM()), rotate(Matrix4::identityM()), translate(Matrix4::identityM())
 {
+
 }
 
 Geometry::Geometry(const Geometry& other)
-    : id(other.id), vertices(other.vertices), normals(other.normals), uvs(other.uvs), faces(other.faces), point_groups(other.point_groups), scale(other.scale), rotate(other.rotate), translate(other.translate), dynamic_transforms(other.dynamic_transforms)
+	: id(other.id), vertices(other.vertices), normals(other.normals), uvs(other.uvs), faces(other.faces), point_groups(other.point_groups), scale(other.scale), rotate(other.rotate), translate(other.translate), dynamic_transforms(other.dynamic_transforms)
 {
+
 }
 
 Geometry::~Geometry()
@@ -37,12 +39,26 @@ Geometry::~Geometry()
 }
 
 Geometry::Geometry(string new_id,
-	    vector<Vec4> _verts,
-	    vector<Vec4> _norms,
-	    vector<Vec4> _uvs,
-	    vector<Face> _faces)
-    : id(new_id), vertices(_verts), normals(_norms), uvs(_uvs), faces(_faces), scale(Matrix4::identityM()), rotate(Matrix4::identityM()), translate(Matrix4::identityM())
+		vector<Vec4> _verts,
+		vector<Vec4> _norms,
+		vector<Vec4> _uvs,
+		vector<Face> _faces,
+		Geometry* _parent) : id(new_id), 
+							vertices(_verts), 
+							normals(_norms), 
+							uvs(_uvs), 
+							faces(_faces), 
+							scale(Matrix4::identityM()), 
+							rotate(Matrix4::identityM()), 
+							translate(Matrix4::identityM()), 
+							parent(_parent)
 {
+
+}
+
+string Geometry::GetId()
+{
+	return id;
 }
 
 void Geometry::Scale(float x, float y, float z)
@@ -62,23 +78,33 @@ void Geometry::Rotate(float x, float y, float z)
 		Matrix4::rotateAxisM('z', z);
 }
 
+void Geometry::GenerateTransform()
+{
+	// Parenting
+	if (parent != NULL)
+	{		
+		parent->GenerateTransform();
+	}
+
+	// Translate
+	glMultMatrixf(translate.get());
+	// Scale
+	glMultMatrixf(scale.get());
+	// Rotate
+	glMultMatrixf(rotate.get());	
+}
+
 void Geometry::Draw()
 {
-    glMatrixMode(GL_MODELVIEW);
-    // Save matrix state
-    glPushMatrix();
-    // Scale
-    glMultMatrixf(scale.get());
-    // Rotate
-    glMultMatrixf(rotate.get());
-    // Translate
-    glMultMatrixf(translate.get());
+	glMatrixMode(GL_MODELVIEW);
+	// Save matrix state
+	glPushMatrix();
+
+	GenerateTransform();
 
 	GLuint texid = TextureMan::GetInstance()->Get(id);
 	glBindTexture(GL_TEXTURE_2D, texid);
 	glBegin(GL_TRIANGLES);
-	
-	Matrix4 transform = translate * (rotate * scale);
 
 	for(int f = 0; f < faces.size(); f++)
 	{
@@ -98,6 +124,6 @@ void Geometry::Draw()
 
 	glEnd();
 
-    // Undo all transforms
-    glPopMatrix();
+	// Undo all transforms
+	glPopMatrix();
 }

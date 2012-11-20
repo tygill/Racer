@@ -21,11 +21,15 @@ private:
 	ObjectMan();
 	~ObjectMan();
 	void LoadObjects();
-	void LoadObject(string name);
-	void LoadTexture(string name);
+	Geometry* LoadObject(string id,
+		string name,
+		bool collidable,
+		string parent_id);
+	void LoadTexture(string id, string name);
 
 public:
-	vector<Geometry> objects;
+	vector<Geometry*> objects;
+	vector<Geometry*> collidables;
 	static ObjectMan* GetInstance()
 	{
 		if (instance == NULL)

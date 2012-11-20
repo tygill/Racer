@@ -23,7 +23,9 @@
 
 Geometry::Geometry()
 {
-
+	scale = Matrix4::identityM();
+	rotate = Matrix4::identityM();
+	translate = Matrix4::identityM();
 }
 
 Geometry::Geometry(const Geometry& other)
@@ -34,10 +36,9 @@ Geometry::Geometry(const Geometry& other)
 	uvs = other.uvs;
 	faces = other.faces;
 	point_groups = other.point_groups;
-	// TODO: Figured this out
-	//scale = other.scale;
-	//rotate = other.rotate;
-	//translate = other.translate;
+	scale = other.scale;
+	rotate = other.rotate;
+	translate = other.translate;
 	dynamic_transforms = other.dynamic_transforms;
 }
 
@@ -57,6 +58,26 @@ Geometry::Geometry(string new_id,
 	normals = _norms;
 	uvs = _uvs;
 	faces = _faces;
+	scale = Matrix4::identityM();
+	rotate = Matrix4::identityM();
+	translate = Matrix4::identityM();
+}
+
+void Geometry::Scale(float x, float y, float z)
+{
+	scale = Matrix4::scaleM(x, y, z) * scale;
+}
+
+void Geometry::Translate(float x, float y, float z)
+{
+	translate *= Matrix4::translateM(x, y, z);
+}
+
+void Geometry::Rotate(float x, float y, float z)
+{
+	rotate *= Matrix4::rotateAxisM('x', x) *
+		Matrix4::rotateAxisM('y', y) *
+		Matrix4::rotateAxisM('z', z);
 }
 
 void Geometry::Draw()
@@ -65,20 +86,24 @@ void Geometry::Draw()
 	glBindTexture(GL_TEXTURE_2D, texid);
 	glBegin(GL_TRIANGLES);
 	
+	Matrix4 transform = translate * (rotate * scale);
+
 	for(int f = 0; f < faces.size(); f++)
 	{
 		Face face = faces[f];
 
 		for(int v = 0; v < face.vertices.size(); v++)
 		{
-			glNormal3f(face.normals[v][0],
-				face.normals[v][1],
-				face.normals[v][2]);
-			glTexCoord2f(face.uvs[v][0],
-				face.uvs[v][1]);
-			glVertex3f(face.vertices[v][0],
-				face.vertices[v][1],
-				face.vertices[v][2]);
+			Vec4 vertex = face.vertices[v];
+			Vec4 normal = face.normals[v];
+			Vec4 uv = face.uvs[v];
+
+			vertex = transform * vertex;
+			normal = transform * normal;
+
+			glNormal3f(normal[0], normal[1], normal[2]);
+			glTexCoord2f(uv[0],	uv[1]);
+			glVertex3f(vertex[0], vertex[1], vertex[2]);
 		}
 	}
 

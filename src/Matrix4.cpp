@@ -38,6 +38,10 @@ Matrix4 Matrix4::rotateAxisM(char axis, float theta){
 }
 
 // Constructors
+Matrix4::Matrix4(){
+	float i[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	memcpy(data, i, sizeof(float)*16);
+}
 Matrix4::Matrix4(float* values){
 	memcpy(data, values, sizeof(float)*16); // Column Major Order
 }
@@ -50,7 +54,7 @@ Matrix4::Matrix4(const Matrix4& other){
 
 // Instance Methods
 // Operator Overloads
-Matrix4& Matrix4::operator=(Matrix4& rhs){
+Matrix4& Matrix4::operator=(const Matrix4& rhs){
 	if(this != &rhs){
 		memcpy(data, rhs.data,sizeof(float)*16);
 	}

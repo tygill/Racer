@@ -18,15 +18,17 @@ public:
 	static Matrix4 rotateAxisM(char axis, float theta);
 
 	// Constructors
+    Matrix4();
 	Matrix4(float* values);
 	~Matrix4();
 	Matrix4(const Matrix4& other);
 	
 	// Instance Methods
 	// Operator Overloads
-	Matrix4& operator=(Matrix4& rhs);
+	Matrix4& operator=(const Matrix4& rhs);
 	float& operator[](int index);
 	const float& operator[](int index) const;
+    float* get();
 	float& get(int row, int col);
 	Matrix4& operator+=(const Matrix4& rhs);
 	Matrix4 operator+(const Matrix4& rhs);

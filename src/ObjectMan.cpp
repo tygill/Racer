@@ -114,7 +114,7 @@ void ObjectMan::LoadObject(string name)
 	Geometry geo(name, vertices, normals, uv_points, faces);
 	objects.push_back(geo);
 
-	//delete loader;
+	delete loader;
 
 	cout << "DONE." << endl;
 }

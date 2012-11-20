@@ -9,8 +9,7 @@ using namespace std;
 
 // Static Convenience Methods
 Matrix4 Matrix4::identityM(){
-	float i[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
-	return Matrix4(i);
+	return Matrix4();
 }
 Matrix4 Matrix4::scaleM(float x, float y, float z){
 	float i[16]={x,0,0,0,0,y,0,0,0,0,z,0,0,0,0,1};
@@ -38,6 +37,10 @@ Matrix4 Matrix4::rotateAxisM(char axis, float theta){
 }
 
 // Constructors
+Matrix4::Matrix4() {
+    float i[16]={1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
+    memcpy(data, i, sizeof(float)*16);
+}
 Matrix4::Matrix4(float* values){
 	memcpy(data, values, sizeof(float)*16); // Column Major Order
 }
@@ -50,7 +53,7 @@ Matrix4::Matrix4(const Matrix4& other){
 
 // Instance Methods
 // Operator Overloads
-Matrix4& Matrix4::operator=(Matrix4& rhs){
+Matrix4& Matrix4::operator=(const Matrix4& rhs){
 	if(this != &rhs){
 		memcpy(data, rhs.data,sizeof(float)*16);
 	}
@@ -61,6 +64,9 @@ float& Matrix4::operator[](int index){
 }
 const float& Matrix4::operator[](int index) const{
 	return data[index]; //const
+}
+float* Matrix4::get() {
+    return data;
 }
 float& Matrix4::get(int row, int col){
 	return data[row+col*4];

@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 #include "Vec4.h"
+#include "Matrix4.h"
 #include "KineticState.h"
 #include "Face.h"
 using namespace std;
@@ -28,9 +29,9 @@ private:
 	vector<Vec4> uvs;
 	vector<Face> faces;
 	map<int,vector<Vec4*> > point_groups;
-	Vec4 scale;
-	Vec4 rotate;
-	Vec4 translate;
+	Matrix4 scale;
+	Matrix4 rotate;
+	Matrix4 translate;
 	KineticState dynamic_transforms;
 
 public:

@@ -23,22 +23,12 @@
 
 Geometry::Geometry()
 {
-
 }
 
 Geometry::Geometry(const Geometry& other)
+    : id(other.id), vertices(other.vertices), normals(other.normals), uvs(other.uvs), faces(other.faces), point_groups(other.point_groups), scale(other.scale), rotate(other.rotate), translate(other.translate), dynamic_transforms(other.dynamic_transforms)
 {
-	id = other.id;
-	vertices = other.vertices;
-	normals = other.normals;
-	uvs = other.uvs;
-	faces = other.faces;
-	point_groups = other.point_groups;
-	// TODO: Figured this out
-	//scale = other.scale;
-	//rotate = other.rotate;
-	//translate = other.translate;
-	dynamic_transforms = other.dynamic_transforms;
+
 }
 
 Geometry::~Geometry()
@@ -47,20 +37,26 @@ Geometry::~Geometry()
 }
 
 Geometry::Geometry(string new_id,
-		vector<Vec4> _verts,
-		vector<Vec4> _norms,
-		vector<Vec4> _uvs,
-		vector<Face> _faces)
+	    vector<Vec4> _verts,
+	    vector<Vec4> _norms,
+	    vector<Vec4> _uvs,
+	    vector<Face> _faces)
+    : id(new_id), vertices(_verts), normals(_norms), uvs(_uvs), faces(_faces), scale(Matrix4::scaleM(1, 1, 1)), rotate(Matrix4::rotateAxisM('x', 0)), translate(Matrix4::translateM(0, 0, 0))
 {
-	id = new_id;
-	vertices = _verts;
-	normals = _norms;
-	uvs = _uvs;
-	faces = _faces;
 }
 
 void Geometry::Draw()
 {
+    glMatrixMode(GL_MODELVIEW);
+    // Save matrix state
+    glPushMatrix();
+    // Scale
+    glMultMatrixf(scale.get());
+    // Rotate
+    glMultMatrixf(rotate.get());
+    // Translate
+    glMultMatrixf(translate.get());
+
 	GLuint texid = TextureMan::GetInstance()->Get(id);
 	glBindTexture(GL_TEXTURE_2D, texid);
 	glBegin(GL_TRIANGLES);
@@ -83,4 +79,7 @@ void Geometry::Draw()
 	}
 
 	glEnd();
+
+    // Undo all transforms
+    glPopMatrix();
 }

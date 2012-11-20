@@ -69,60 +69,17 @@ int main(int argc, char* argv[]){
 GLvoid DrawGLScene(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	/*
-	 * If you are compiling on linux or mac the stereo code will not function. The WIN32 preprocessor macros
-	 * should catch that for you.
-	 */
-	// This is the stereo code section don't touch this part until project 4 skip to the else statement
-#ifdef WIN32
 
-	if(stereo){
-		HWND hwnd = FindWindow("glut", windowName);
-		SetWindowPos(hwnd, NULL, 0, 0, GetSystemMetrics(SM_CXSCREEN) * 2, GetSystemMetrics(SM_CYSCREEN), CDS_FULLSCREEN);
-		glViewport(0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+	/* This is your normal draw code. Put your code here. This should be kept no matter the OS you are using */
+	glViewport(0, 0, windowWidth, windowHeight);
+	glTranslatef(0.0f, -1.0f, -5.0f);
 
-		glTranslatef(0.0f, 0.0f, -5.0f);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glBegin(GL_TRIANGLES);
-			glVertex3f(0.0f,0.0f,0.0f);
-			glVertex3f(1.0f, 0.0f, 0.0f);
-			glVertex3f(0.0f, 1.0f, 0.0f);
-		glEnd();
-
-		glViewport(GetSystemMetrics(SM_CXSCREEN), 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
-
-		glLoadIdentity();
-
-		glTranslatef(0.0f, 0.0f, -5.0f);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glBegin(GL_TRIANGLES);
-			glVertex3f(0.0f,0.0f,0.0f);
-			glVertex3f(1.0f, 0.0f, 0.0f);
-			glVertex3f(0.0f, 1.0f, 0.0f);
-		glEnd();
-	}
-
-	//This is where you want to start editing the code to display what you are drawing. Currently it does one triangle. 
-	else{
-
-#endif // WIN32
-
-		/* This is your normal draw code. Put your code here. This should be kept no matter the OS you are using */
-		glViewport(0, 0, windowWidth, windowHeight);
-		glTranslatef(0.0f, -1.0f, -5.0f);
-
-		vector<Geometry> models = ObjectMan::GetInstance()->objects;
+	vector<Geometry> models = ObjectMan::GetInstance()->objects;
 		
-		for(int i = 0; i < models.size(); i++)
-		{
-			models[i].Draw();
-		}
-
-#ifdef WIN32
+	for(int i = 0; i < models.size(); i++)
+	{
+		models[i].Draw();
 	}
-#endif // WIN32
 
 	glFlush();
 	glutSwapBuffers();

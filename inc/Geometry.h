@@ -18,6 +18,7 @@
 #include "Matrix4.h"
 #include "KineticState.h"
 #include "Face.h"
+#include "Matrix4.h"
 using namespace std;
 
 class Geometry{
@@ -53,6 +54,9 @@ public:
 
 	
 	// Instance Methods
+	void Scale(float x, float y, float z);
+	void Rotate(float x, float y, float z);
+	void Translate(float x, float y, float z);
 	void Draw();
 
 };

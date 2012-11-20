@@ -31,6 +31,7 @@
 #define KEYBOARD_F 102
 #define NORMAL_EXIT_GLUT_LOOP "terminating glut"
 #define PROGRAM_NAME "Racer"
+#define VERSION "v0.0"
 
 GLvoid HandleKeyboardInput();
 

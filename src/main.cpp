@@ -17,6 +17,14 @@ bool specialKeys[1000] = {0};
 
 int main(int argc, char* argv[]){	
 
+	cout << PROGRAM_NAME << " - " << VERSION << endl
+		<< "BYU CS 455 - Fall 2012" << endl << endl
+		<< "Created by:" << endl
+		<< "\tJosh Davis" << endl
+		<< "\tTyler Gill" << endl
+		<< "\tMorgan Strong" << endl
+		<< "\tJames Williams" << endl << endl;
+	
 	glutInit(&argc, argv);
 	/* setting up double buffering rbg and depth for this */
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -42,6 +50,8 @@ int main(int argc, char* argv[]){
 
 	// Game initialization
 	ObjectMan* man = ObjectMan::GetInstance();
+
+	cout << "Running Game..." << endl << endl;
 
 	/* Gets the loop rolling */
 	try{
@@ -110,14 +120,15 @@ GLvoid DrawGLScene(){
 #endif // WIN32
 
 		/* This is your normal draw code. Put your code here. This should be kept no matter the OS you are using */
+
 		glViewport(0, 0, windowWidth, windowHeight);
 		glTranslatef(0.0f, -1.0f, -5.0f);
 
-		vector<Geometry> models = ObjectMan::GetInstance()->objects;
-		
+		vector<Geometry*> models = ObjectMan::GetInstance()->objects;
+
 		for(int i = 0; i < models.size(); i++)
 		{
-			models[i].Draw();
+			models[i]->Draw();
 		}
 
 #ifdef WIN32

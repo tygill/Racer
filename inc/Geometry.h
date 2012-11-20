@@ -33,6 +33,7 @@ private:
 	Matrix4 rotate;
 	Matrix4 translate;
 	KineticState dynamic_transforms;
+	Geometry* parent;
 
 public:
 	// Constructors
@@ -49,13 +50,16 @@ public:
 		vector<Vec4> _verts,
 		vector<Vec4> _norms,
 		vector<Vec4> _uvs,
-		vector<Face> _faces);
+		vector<Face> _faces,
+		Geometry* parent);
 
 	
 	// Instance Methods
+	string GetId();
 	void Scale(float x, float y, float z);
 	void Rotate(float x, float y, float z);
 	void Translate(float x, float y, float z);
+	Matrix4 GenerateTransform();
 	void Draw();
 
 };

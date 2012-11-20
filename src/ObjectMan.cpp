@@ -10,6 +10,7 @@
 #define TEXEXT ".bmp"
 
 #include <fstream>
+#include <sstream>
 #include "../inc/main.h"
 #include "../inc/ObjectMan.h"
 #include "../inc/TextureMan.h"
@@ -20,6 +21,12 @@ ObjectMan* ObjectMan::instance = NULL;
 ObjectMan::ObjectMan()
 {
 	LoadObjects();
+	cout << "Collidable Objects:" << endl;
+	for (int i = 0; i < collidables.size(); i++)
+	{
+		cout << "\t" << collidables[i]->GetId() << endl;
+	}
+	cout << endl;
 }
 
 void ObjectMan::LoadObjects()
@@ -39,17 +46,61 @@ void ObjectMan::LoadObjects()
 
 	while(enlistments.good())
 	{
-		string filename;
-		getline(enlistments, filename);
+		string line;
+		getline(enlistments, line);
 
-		LoadObject(filename);
-		LoadTexture(filename);
+		if (line.find("#") == 0 || line.empty())
+		{
+			// Comment or empty line in enlistments - skip over it
+			continue;
+		}
+
+		string obj_id;
+		string filename;
+		float tx, ty, tz, rx, ry, rz, sx, sy, sz;
+		string parent_id;
+
+		istringstream iss(line);
+		iss >> obj_id;
+		iss >> filename;
+		iss >> tx;
+		iss >> ty;
+		iss >> tz;
+		iss >> rx;
+		iss >> ry;
+		iss >> rz;
+		iss >> sx;
+		iss >> sy;
+		iss >> sz;
+		iss >> parent_id;
+
+		bool collidable = false;
+		if (filename.find("::") != string::npos)
+		{
+			collidable = true;
+			filename = filename.substr(0, filename.find("::"));
+		}
+
+		Geometry* obj = LoadObject(obj_id, filename, collidable, parent_id);
+
+		cout << "\t\tTransformations...";
+
+		obj->Translate(tx, ty, tz);
+		obj->Rotate(rx, ry, rz);
+		obj->Scale(sx, sy, sz);
+
+		cout << "DONE." << endl;
+
+		LoadTexture(obj_id, filename);
 	}
 
-	cout << "Loading Complete." << endl;
+	cout << "Loading Complete." << endl << endl;
 }
 
-void ObjectMan::LoadObject(string name)
+Geometry* ObjectMan::LoadObject(string id,
+	string name,
+	bool collidable,
+	string parent_id)
 {
 	objLoader* loader = new objLoader();
 	string filename = MODELSPATH + name + GEOEXT;
@@ -111,25 +162,48 @@ void ObjectMan::LoadObject(string name)
 		faces.push_back(new_face);
 	}
 
-	Geometry geo(name, vertices, normals, uv_points, faces);
+	Geometry* p = NULL;
+	for (int a = 0; a < objects.size(); a++)
+	{
+		if (objects[a]->GetId() == parent_id)
+		{
+			p = objects[a];
+		}
+	}
+
+	Geometry* geo = new Geometry(id, vertices, normals, uv_points, faces, p);
 	objects.push_back(geo);
+
+	if (collidable)
+	{
+		collidables.push_back(geo);
+	}
 
 	//delete loader;
 
 	cout << "DONE." << endl;
+
+	return geo;
 }
 
-void ObjectMan::LoadTexture(string name)
+void ObjectMan::LoadTexture(string id, string name)
 {
 	string tex = MODELSPATH + name + TEXEXT;
 	cout << "\t" << tex << "...";
 	GLuint texId;
+
+	if (TextureMan::GetInstance()->Get(id) != 0)
+	{
+		cout << "Previously loaded." << endl;
+		return;
+	}
+
 	bool success = NeHeLoadBitmap(LPTSTR(tex.c_str()), texId);
 	if(!success)
 	{
-		cout << "Unsuccessful" << endl;
+		cout << "Unsuccessful." << endl;
 		return;
 	}
-	TextureMan::GetInstance()->Add(name, texId);
+	TextureMan::GetInstance()->Add(id, texId);
 	cout << "DONE." << endl;
 }

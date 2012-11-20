@@ -20,6 +20,7 @@
 *.vcxproj.filters
 *.vcxproj.user
 ipch/*
+*.vsp
 
 # Build Folders
 Debug/*

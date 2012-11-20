@@ -26,6 +26,7 @@ Geometry::Geometry()
 	scale = Matrix4::identityM();
 	rotate = Matrix4::identityM();
 	translate = Matrix4::identityM();
+	parent = NULL;
 }
 
 Geometry::Geometry(const Geometry& other)
@@ -40,6 +41,7 @@ Geometry::Geometry(const Geometry& other)
 	rotate = other.rotate;
 	translate = other.translate;
 	dynamic_transforms = other.dynamic_transforms;
+	parent = other.parent;
 }
 
 Geometry::~Geometry()
@@ -51,7 +53,8 @@ Geometry::Geometry(string new_id,
 		vector<Vec4> _verts,
 		vector<Vec4> _norms,
 		vector<Vec4> _uvs,
-		vector<Face> _faces)
+		vector<Face> _faces,
+		Geometry* _parent)
 {
 	id = new_id;
 	vertices = _verts;
@@ -61,6 +64,12 @@ Geometry::Geometry(string new_id,
 	scale = Matrix4::identityM();
 	rotate = Matrix4::identityM();
 	translate = Matrix4::identityM();
+	parent = _parent;
+}
+
+string Geometry::GetId()
+{
+	return id;
 }
 
 void Geometry::Scale(float x, float y, float z)
@@ -80,13 +89,25 @@ void Geometry::Rotate(float x, float y, float z)
 		Matrix4::rotateAxisM('z', z);
 }
 
+Matrix4 Geometry::GenerateTransform()
+{
+	if (parent != NULL)
+	{
+		return parent->GenerateTransform() * (translate * (rotate * scale));
+	}
+	else
+	{
+		return translate * (rotate * scale);
+	}
+}
+
 void Geometry::Draw()
 {
 	GLuint texid = TextureMan::GetInstance()->Get(id);
 	glBindTexture(GL_TEXTURE_2D, texid);
 	glBegin(GL_TRIANGLES);
 	
-	Matrix4 transform = translate * (rotate * scale);
+	Matrix4 transform = GenerateTransform();
 
 	for(int f = 0; f < faces.size(); f++)
 	{

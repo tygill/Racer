@@ -28,7 +28,7 @@ Geometry::Geometry()
 }
 
 Geometry::Geometry(const Geometry& other)
-	: id(other.id), vertices(other.vertices), normals(other.normals), uvs(other.uvs), faces(other.faces), point_groups(other.point_groups), scale(other.scale), rotate(other.rotate), translate(other.translate), dynamic_transforms(other.dynamic_transforms)
+	: id(other.id), vertices(other.vertices), normals(other.normals), uvs(other.uvs), faces(other.faces), point_groups(other.point_groups), scale(other.scale), rotate(other.rotate), translate(other.translate), dynamic_transforms(other.dynamic_transforms), parent(other.parent)
 {
 
 }
@@ -91,7 +91,7 @@ void Geometry::GenerateTransform()
 	// Scale
 	glMultMatrixf(scale.get());
 	// Rotate
-	glMultMatrixf(rotate.get());	
+	glMultMatrixf(rotate.get());
 }
 
 void Geometry::Draw()

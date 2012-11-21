@@ -18,6 +18,27 @@
 
 ObjectMan* ObjectMan::instance = NULL;
 
+ObjectMan* ObjectMan::GetInstance() 
+{
+	if (instance == NULL)
+	{
+		instance = new ObjectMan();
+	}
+	return instance;
+}
+
+Geometry* ObjectMan::GetId(string id) {
+    return GetInstance()->getId(id);
+}
+
+vector<Geometry*> ObjectMan::GetObjects() {
+    return GetInstance()->getObjects();
+}
+
+vector<Geometry*> ObjectMan::GetCollidables() {
+    return GetInstance()->getCollidables();
+}
+
 ObjectMan::ObjectMan()
 {
 	LoadObjects();
@@ -163,22 +184,22 @@ Geometry* ObjectMan::LoadObject(string id,
 	}
 
 	Geometry* p = NULL;
-	for (int a = 0; a < objects.size(); a++)
-	{
-		if (objects[a]->GetId() == parent_id)
-		{
-			p = objects[a];
-		}
-	}
+    map<string, Geometry*>::const_iterator parentFound = objectMap.find(parent_id);
+    if (parentFound != objectMap.end()) {
+        p = parentFound->second;
+    }
 
 	Geometry* geo = new Geometry(id, vertices, normals, uv_points, faces, p);
-	objects.push_back(geo);
+	objectMap.insert(make_pair(id, geo));
+    objects.push_back(geo);
 
 	if (collidable)
 	{
 		collidables.push_back(geo);
 	}
 
+    // Is there a reason the loader isn't deleted? I tried uncommenting this, and nothing appeared to die a violent death.
+    //  -Tyler
 	//delete loader;
 
 	cout << "DONE." << endl;
@@ -206,4 +227,21 @@ void ObjectMan::LoadTexture(string id, string name)
 	}
 	TextureMan::GetInstance()->Add(id, texId);
 	cout << "DONE." << endl;
+}
+
+Geometry* ObjectMan::getId(string id) {
+    map<string, Geometry*>::iterator itr = objectMap.find(id);
+    if (itr != objectMap.end()) {
+        return itr->second;
+    } else {
+        return NULL;
+    }
+}
+
+vector<Geometry*> ObjectMan::getObjects() {
+    return objects;
+}
+
+vector<Geometry*> ObjectMan::getCollidables() {
+    return collidables;
 }

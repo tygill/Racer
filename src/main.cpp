@@ -11,7 +11,6 @@ int windowHeight = DEFAULT_WINDOW_HEIGHT;
 char* windowName = PROGRAM_NAME;
 
 int fullscreen = 0;
-int stereo = 0;
 
 bool specialKeys[1000] = {0};
 
@@ -84,7 +83,7 @@ GLvoid DrawGLScene(){
 	glViewport(0, 0, windowWidth, windowHeight);
 	glTranslatef(0.0f, -1.0f, -5.0f);
 
-	vector<Geometry*> models = ObjectMan::GetInstance()->objects;
+	vector<Geometry*> models = ObjectMan::GetObjects();
 	
 	for(int i = 0; i < models.size(); i++)
 	{
@@ -116,8 +115,6 @@ GLvoid GLKeyDown(unsigned char key, int x, int y){
 
 	// if "f" key is pressed go into fullscreen mode
 	if(key == KEYBOARD_F){
-		if(stereo)
-			return;
 		if(fullscreen){
 			fullscreen = 0;
 			glutReshapeWindow(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
@@ -128,31 +125,6 @@ GLvoid GLKeyDown(unsigned char key, int x, int y){
 			fullscreen = 1;
 		}
 	}
-
-	/*
-	 * Currently the stereo viewing relies on windows defined macros to work properly
-	 */
-#ifdef WIN32
-	// if "s" key is pressed go into stereo mode
-	if(key == KEYBOARD_S){ 
-		if(stereo){
-			if(!fullscreen){
-				glutReshapeWindow(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-				glutPositionWindow(100,100);
-			}
-			else{
-				glutFullScreen();
-			}
-			stereo = 0;
-			DrawGLScene();
-		}
-		else{
-			glutFullScreen();
-			stereo = 1;
-			DrawGLScene();
-		}
-	}
-#endif // WIN32
 }
 
 /*
@@ -169,6 +141,9 @@ GLvoid SpecialKeys(int key, int x, int y){
 		case GLUT_KEY_UP:
 			specialKeys[GLUT_KEY_UP] = 1;
 			break;
+		case GLUT_KEY_DOWN:
+			specialKeys[GLUT_KEY_DOWN] = 1;
+			break;
 		default:
 			break;
 	}
@@ -179,11 +154,14 @@ GLvoid SpecialKeysUp(int key, int x, int y){
 		case GLUT_KEY_LEFT:
 			specialKeys[GLUT_KEY_LEFT] = 0;
 			break;
+		case GLUT_KEY_RIGHT:
+			specialKeys[GLUT_KEY_RIGHT] = 0;
+			break;
 		case GLUT_KEY_UP:
 			specialKeys[GLUT_KEY_UP] = 0;
 			break;
-		case GLUT_KEY_RIGHT:
-			specialKeys[GLUT_KEY_RIGHT] = 0;
+		case GLUT_KEY_DOWN:
+			specialKeys[GLUT_KEY_DOWN] = 0;
 			break;
 		default:
 			break;
@@ -198,7 +176,10 @@ GLvoid HandleKeyboardInput(){
 		std::cout << "Key right pressed" << std::endl;
 	}
 	if(specialKeys[GLUT_KEY_UP]){
-		std::cout << "Key Up pressed" << std::endl;
+		std::cout << "Key up pressed" << std::endl;
+	}
+	if(specialKeys[GLUT_KEY_DOWN]){
+		std::cout << "Key down pressed" << std::endl;
 	}
 }
 
@@ -270,10 +251,7 @@ GLvoid ReSizeGLScene(int width, int height){
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	if(stereo)
-		gluPerspective(45.0f, (GLfloat)width/((GLfloat)height * 2.0f), 0.1f, 2000.0f);
-	else
-		gluPerspective(45.0f, (GLfloat)width/(GLfloat)height, 0.1f, 2000.0f);
+	gluPerspective(45.0f, (GLfloat)width/(GLfloat)height, 0.1f, 2000.0f);
 
 	windowWidth = width;
 	windowHeight = height;

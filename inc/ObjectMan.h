@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "Geometry.h"
 
@@ -16,8 +17,20 @@ using namespace std;
 
 class ObjectMan
 {
+public:
+	static ObjectMan* GetInstance();
+
+    static Geometry* GetId(string id);
+    static vector<Geometry*> GetObjects();
+    static vector<Geometry*> GetCollidables();
+
 private:
+	map<string, Geometry*> objectMap;
+    vector<Geometry*> objects;
+	vector<Geometry*> collidables;
+
 	static ObjectMan* instance;
+
 	ObjectMan();
 	~ObjectMan();
 	void LoadObjects();
@@ -27,17 +40,9 @@ private:
 		string parent_id);
 	void LoadTexture(string id, string name);
 
-public:
-	vector<Geometry*> objects;
-	vector<Geometry*> collidables;
-	static ObjectMan* GetInstance()
-	{
-		if (instance == NULL)
-		{
-			instance = new ObjectMan();
-		}
-		return instance;
-	}
+    Geometry* getId(string id);
+    vector<Geometry*> getObjects();
+    vector<Geometry*> getCollidables();
 };
 
 #endif

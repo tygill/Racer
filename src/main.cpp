@@ -10,10 +10,6 @@ int windowWidth = DEFAULT_WINDOW_WIDTH;
 int windowHeight = DEFAULT_WINDOW_HEIGHT;
 char* windowName = PROGRAM_NAME;
 
-int fullscreen = 0;
-
-bool specialKeys[1000] = {0};
-
 int main(int argc, char* argv[]){	
 
 	cout << PROGRAM_NAME << " - " << VERSION << endl
@@ -41,14 +37,15 @@ int main(int argc, char* argv[]){
 	/* This is called everytime the window is altered */
 	glutReshapeFunc(ReSizeGLScene);
 	/* this gets called on a keyboard event */
-	glutKeyboardFunc(GLKeyDown);
+	//glutKeyboardFunc(GLKeyDown);
 
-	glutSpecialFunc(SpecialKeys);
+	//glutSpecialFunc(SpecialKeys);
 
-	glutSpecialUpFunc(SpecialKeysUp);
+	//glutSpecialUpFunc(SpecialKeysUp);
 
 	// Game initialization
 	ObjectMan* man = ObjectMan::GetInstance();
+	InputMan* inman = InputMan::GetInstance();
 
 	cout << "Running Game..." << endl << endl;
 
@@ -96,8 +93,8 @@ GLvoid DrawGLScene(){
 
 /* checks for joystick input then draws */
 GLvoid IdleGLScene(){
-	PollJoyStick();
-	HandleKeyboardInput();
+	InputMan::UpdateInput();
+	ObjectMan::UpdateObjectsWithInput();
 	DrawGLScene();
 }
 
@@ -108,80 +105,8 @@ GLvoid IdleGLScene(){
  * to capture special keys like, ctrl, shift, F1, F2, F..., or arrow keys use
  * the special keys function
  */
-GLvoid GLKeyDown(unsigned char key, int x, int y){
-	// if "esc" is pressed close
-	if(key == KEYBOARD_ESC)
-		throw NORMAL_EXIT_GLUT_LOOP;
 
-	// if "f" key is pressed go into fullscreen mode
-	if(key == KEYBOARD_F){
-		if(fullscreen){
-			fullscreen = 0;
-			glutReshapeWindow(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-			glutPositionWindow(100,100);
-		}
-		else{
-			glutFullScreen();
-			fullscreen = 1;
-		}
-	}
-}
 
-/*
- * These are the special keys as is set apart by glut
- */
-GLvoid SpecialKeys(int key, int x, int y){
-	switch(key){
-		case GLUT_KEY_LEFT:
-			specialKeys[GLUT_KEY_LEFT] = 1;
-			break;
-		case GLUT_KEY_RIGHT:
-			specialKeys[GLUT_KEY_RIGHT] = 1;
-			break;
-		case GLUT_KEY_UP:
-			specialKeys[GLUT_KEY_UP] = 1;
-			break;
-		case GLUT_KEY_DOWN:
-			specialKeys[GLUT_KEY_DOWN] = 1;
-			break;
-		default:
-			break;
-	}
-}
-
-GLvoid SpecialKeysUp(int key, int x, int y){
-	switch(key){
-		case GLUT_KEY_LEFT:
-			specialKeys[GLUT_KEY_LEFT] = 0;
-			break;
-		case GLUT_KEY_RIGHT:
-			specialKeys[GLUT_KEY_RIGHT] = 0;
-			break;
-		case GLUT_KEY_UP:
-			specialKeys[GLUT_KEY_UP] = 0;
-			break;
-		case GLUT_KEY_DOWN:
-			specialKeys[GLUT_KEY_DOWN] = 0;
-			break;
-		default:
-			break;
-	}
-}
-
-GLvoid HandleKeyboardInput(){
-	if(specialKeys[GLUT_KEY_LEFT]){
-		std::cout << "Key left pressed" << std::endl;
-	}
-	if(specialKeys[GLUT_KEY_RIGHT]){
-		std::cout << "Key right pressed" << std::endl;
-	}
-	if(specialKeys[GLUT_KEY_UP]){
-		std::cout << "Key up pressed" << std::endl;
-	}
-	if(specialKeys[GLUT_KEY_DOWN]){
-		std::cout << "Key down pressed" << std::endl;
-	}
-}
 
 #ifdef WIN32
 

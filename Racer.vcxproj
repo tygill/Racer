@@ -16,6 +16,7 @@
     <ClCompile Include="lib\kixor_obj\obj_parser.cpp" />
     <ClCompile Include="lib\kixor_obj\string_extra.cpp" />
     <ClCompile Include="src\Geometry.cpp" />
+    <ClCompile Include="src\InputMan.cpp" />
     <ClCompile Include="src\KineticState.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Matrix4.cpp" />
@@ -26,6 +27,7 @@
   <ItemGroup>
     <ClInclude Include="inc\Face.h" />
     <ClInclude Include="inc\Geometry.h" />
+    <ClInclude Include="inc\InputMan.h" />
     <ClInclude Include="inc\KineticState.h" />
     <ClInclude Include="inc\kixor_obj\list.h" />
     <ClInclude Include="inc\kixor_obj\objLoader.h" />

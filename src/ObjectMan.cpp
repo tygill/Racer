@@ -28,15 +28,24 @@ ObjectMan* ObjectMan::GetInstance()
 }
 
 Geometry* ObjectMan::GetId(string id) {
-    return GetInstance()->getId(id);
+	return GetInstance()->getId(id);
 }
 
 vector<Geometry*> ObjectMan::GetObjects() {
-    return GetInstance()->getObjects();
+	return GetInstance()->getObjects();
 }
 
 vector<Geometry*> ObjectMan::GetCollidables() {
-    return GetInstance()->getCollidables();
+	return GetInstance()->getCollidables();
+}
+
+void ObjectMan::UpdateObjectsWithInput()
+{
+	Geometry* car = GetInstance()->objectMap[CAR];
+	float z = InputMan::GetMovementBackward() - InputMan::GetMovementForward();
+	float x = InputMan::GetMovementRight() - InputMan::GetMovementLeft();
+	bool accel = InputMan::GetAccel();
+	car->Translate(accel * x * TRANSLATE_SCALE, 0.0, accel * z * TRANSLATE_SCALE);
 }
 
 ObjectMan::ObjectMan()
@@ -184,22 +193,22 @@ Geometry* ObjectMan::LoadObject(string id,
 	}
 
 	Geometry* p = NULL;
-    map<string, Geometry*>::const_iterator parentFound = objectMap.find(parent_id);
-    if (parentFound != objectMap.end()) {
-        p = parentFound->second;
-    }
+	map<string, Geometry*>::const_iterator parentFound = objectMap.find(parent_id);
+	if (parentFound != objectMap.end()) {
+		p = parentFound->second;
+	}
 
 	Geometry* geo = new Geometry(id, vertices, normals, uv_points, faces, p);
 	objectMap.insert(make_pair(id, geo));
-    objects.push_back(geo);
+	objects.push_back(geo);
 
 	if (collidable)
 	{
 		collidables.push_back(geo);
 	}
 
-    // Is there a reason the loader isn't deleted? I tried uncommenting this, and nothing appeared to die a violent death.
-    //  -Tyler
+	// Is there a reason the loader isn't deleted? I tried uncommenting this, and nothing appeared to die a violent death.
+	//  -Tyler
 	//delete loader;
 
 	cout << "DONE." << endl;
@@ -230,18 +239,18 @@ void ObjectMan::LoadTexture(string id, string name)
 }
 
 Geometry* ObjectMan::getId(string id) {
-    map<string, Geometry*>::iterator itr = objectMap.find(id);
-    if (itr != objectMap.end()) {
-        return itr->second;
-    } else {
-        return NULL;
-    }
+	map<string, Geometry*>::iterator itr = objectMap.find(id);
+	if (itr != objectMap.end()) {
+		return itr->second;
+	} else {
+		return NULL;
+	}
 }
 
 vector<Geometry*> ObjectMan::getObjects() {
-    return objects;
+	return objects;
 }
 
 vector<Geometry*> ObjectMan::getCollidables() {
-    return collidables;
+	return collidables;
 }
